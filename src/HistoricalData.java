@@ -80,8 +80,28 @@ public class HistoricalData {
         return ausgabe;
     }
 
+    public static String[] getWeatherMain(long dt){
+        String getData = historicalData(dt);
+        String[] weatherStatus = new String[24];
+        String[] parts;
+        int id = 0;
+
+        parts = getData.split("\"dt\"");
+        for(int i = 2; i < parts.length; i++){
+            weatherStatus[id] = parts[i].substring(parts[i].indexOf("main")+7, parts[i].indexOf("description")-3);
+            id++;
+        }
+
+        System.out.println(weatherStatus[0]);
+        return weatherStatus;
+    }
+
     public static void main(String[] args){
-        System.out.println(historicalData(1618587585));
-        System.out.println("\n"+getCloudlvl(1618587585));
+        System.out.println(historicalData(1618587585)+"\n");
+        System.out.println(getCloudlvl(1618587585));
+        String[] test = getWeatherMain(1618587585);
+        for(int i = 0; i < test.length; i++){
+            System.out.print((i+1)+". "+test[i]+", ");
+        }
     }
 }
