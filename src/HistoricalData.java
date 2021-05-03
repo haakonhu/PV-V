@@ -14,6 +14,11 @@ public class HistoricalData {
         return 0;
     }
 
+    /**
+     * Gibt den Durchschnitt des Cloud lvls vom übergebenen date an
+     * @param date der Tag von dem das Cloud lvl erechnet werden soll
+     * @return Durchschnitt des Cloud lvls
+     */
     public static int getCloudlvl(long date) {
         int cloudlvl,sunr,suns,test;
         //String data = "";
@@ -56,8 +61,12 @@ public class HistoricalData {
         System.out.println(dt);
         return cloudlvl/dt.size();
     }
-    /*
-    ausgabe = {"lat":48.6672,"lon":16.3426,"timezone":"Europe/Vienna","timezone_offset":7200,"current":{"dt":1618587585,"sunrise":1618545710,"sunset":1618595193,"temp":280.41,"feels_like":275.44,"pressure":1021,"humidity":57,"dew_point":272.55,"uvi":3.76,"clouds":75,"visibility":30000,"wind_speed":4.12,"wind_deg":300,"weather":[{"id":803,"main":"Clouds","description":"broken clouds","icon":"04d"}]}
+
+    /**
+     * Holt die Daten von OpenWeatherMap
+     * ausgabe = {"lat":48.6672,"lon":16.3426,"timezone":"Europe/Vienna","timezone_offset":7200,"current":{"dt":1618587585,"sunrise":1618545710,"sunset":1618595193,"temp":280.41,"feels_like":275.44,"pressure":1021,"humidity":57,"dew_point":272.55,"uvi":3.76,"clouds":75,"visibility":30000,"wind_speed":4.12,"wind_deg":300,"weather":[{"id":803,"main":"Clouds","description":"broken clouds","icon":"04d"}]}
+     * @param dt Unix date vom Tag von den die Daten geholt werden sollen
+     * @return Datensätze
      */
     public static String historicalData(long dt){
         String ausgabe = "";
@@ -80,6 +89,11 @@ public class HistoricalData {
         return ausgabe;
     }
 
+    /**
+     *
+     * @param dt
+     * @return
+     */
     public static String[] getWeatherMain(long dt){
         String getData = historicalData(dt);
         String[] weatherStatus = new String[24];
@@ -92,16 +106,39 @@ public class HistoricalData {
             id++;
         }
 
-        System.out.println(weatherStatus[0]);
+        //System.out.println(weatherStatus[0]); //nur fürs testen
         return weatherStatus;
     }
 
+    public static String[] getWeatherDescription(long dt){
+        String getData = historicalData(dt);
+        String[] weatherDes = new String[24];
+        String[] parts;
+        int id = 0;
+
+        parts = getData.split("\"dt\"");
+        for(int i = 2; i < parts.length; i++){
+            weatherDes[id] = parts[i].substring(parts[i].indexOf("description")+14, parts[i].indexOf("icon")-3);
+            id++;
+        }
+
+        //System.out.println(weatherStatus[0]); //nur fürs testen
+        return weatherDes;
+    }
+
     public static void main(String[] args){
-        System.out.println(historicalData(1618587585)+"\n");
-        System.out.println(getCloudlvl(1618587585));
-        String[] test = getWeatherMain(1618587585);
-        for(int i = 0; i < test.length; i++){
-            System.out.print((i+1)+". "+test[i]+", ");
+        long date = 1619858454;
+        System.out.println(historicalData(date)+"\n");
+        System.out.println(getCloudlvl(date));
+        System.out.println("\n----------------------Main----------------------");
+        String[] testMain = getWeatherMain(date);
+        for(int i = 0; i < testMain.length; i++){
+            System.out.print((i+1)+". "+testMain[i]+", ");
+        }
+        System.out.println("\n----------------------Description----------------------");
+        String[] testDes = getWeatherDescription(date);
+        for(int j = 0; j < testDes.length; j++){
+            System.out.print((j+1)+". "+testDes[j]+", ");
         }
     }
 }
